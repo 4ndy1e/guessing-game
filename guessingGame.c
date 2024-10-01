@@ -24,7 +24,6 @@ void playGame(Person *person) {
   double sqrtVal = sqrt(randomNum);
   int guess;
 
-  printf("%d IS THE NUMBER\n", randomNum);
   printf("%f is the square root of what number? ", sqrtVal);
   scanf(" %d", &guess);
 
@@ -48,8 +47,6 @@ void playGame(Person *person) {
 
 void printLeaders(Person leaders[5], int size) {  
   printf("\n");
-  printf("There are %d players\n", size);
-
   printf("Here are the current leaders: \n");
 
   for(int i = 0; i <= size; i++) {
@@ -64,8 +61,12 @@ int compare(const void* a, const void* b) {
 }
 
 int main() {
-  // open text file and read contents
+  // initialize variables 
+  // when the game is started, leaderboard.txt should be read, if it exists
+  Person leaders[5] = {0};
+  int index = 0;
   char filename[] = "leaderboard.txt";
+
   FILE* fp = NULL;
   fp = fopen(filename, "r");
 
@@ -74,17 +75,13 @@ int main() {
     exit(1);
   }
 
-  Person leaders[5] = {0};
-  int index = 0;
-
+  // add players to struct array
   while (fscanf(fp, "%19s made %d guesses\n", leaders[index].name, &leaders[index].guesses) == 2) {
-    printf("%s made %d guesses\n", leaders[index].name, leaders[index].guesses);
     index++;
   }
-  // printf("%s made %d guesses\n", leaders[0].name, leaders[0].guesses);
 
-  char choice;
-  
+  // begin game
+  char choice; 
   printf("Welcome! Press 'q' to quit or any other key to continue: ");
   scanf(" %c", &choice);
 
@@ -98,6 +95,13 @@ int main() {
     index++;
   }
 
+  // print players to leaderboard.txt file
+  fp = fopen(filename, "w");
+  for(int i = 0; i < index; i++) {
+    fprintf(fp, "%s made %d guesses\n", leaders[i].name, leaders[i].guesses);
+  }
+
+  // quit options
   if(index == 5)
   {
     printf("Maximum player count reached\n");
